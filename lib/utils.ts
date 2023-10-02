@@ -44,6 +44,7 @@ export function extractDescription($: any) {
 }
 
 export function getHighestPrice(priceList: PriceHistoryItem[]) {
+  if (!priceList.length) return;
   let highestPrice = priceList[0];
   for (let i = 0; i < priceList.length; i++) {
     if (priceList[i].price > highestPrice.price) {
@@ -54,6 +55,7 @@ export function getHighestPrice(priceList: PriceHistoryItem[]) {
 }
 
 export function getLowestPrice(priceList: PriceHistoryItem[]) {
+  if (!priceList.length) return;
   let lowestPrice = priceList[0];
   for (let i = 0; i < priceList.length; i++) {
     if (priceList[i].price < lowestPrice.price) {
@@ -64,6 +66,7 @@ export function getLowestPrice(priceList: PriceHistoryItem[]) {
 }
 
 export function getAveragePrice(priceList: PriceHistoryItem[]) {
+  if (!priceList.length) return;
   const sumOfPrices = priceList.reduce((acc, curr) => acc + curr.price, 0);
   const averagePrice = sumOfPrices / priceList.length || 0;
   return averagePrice;
@@ -92,3 +95,4 @@ export const getEmailNotifType = (
   }
   return null;
 };
+
