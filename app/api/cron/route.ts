@@ -14,7 +14,7 @@ export const maxDuration = 10;
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     connectToDB();
     const products = await Product.find({});
@@ -22,9 +22,9 @@ export async function GET() {
     const updatedProducts = await Promise.all(
       products.map(async (currentProduct) => {
         const scrapedProduct = await scrapeAmazonProduct(currentProduct.url);
-        if (!scrapedProduct) throw new Error("No product found");
+        if (!scrapedProduct) return;
         const updatedPriceHistory = [
-          ...currentProduct?.priceHistory,
+          ...currentProduct.priceHistory,
           { price: scrapedProduct.currentPrice },
         ];
         const product = {
@@ -55,18 +55,17 @@ export async function GET() {
           const userEmails = updatedProduct.users.map(
             (user: any) => user.email
           );
-
           await sendEmail(emailContent, userEmails);
         }
         return updatedProduct;
       })
     );
     return NextResponse.json({
-      message: "ok",
+      message: "Ok",
       data: updatedProducts,
     });
-  } catch (error) {
-    throw new Error(`Error in GET: ${error}`);
+  } catch (error: any) {
+    throw new Error(`Failed to get all products: ${error.message}`);
   }
 }
 
